@@ -9,4 +9,6 @@ https://www.riverbankcomputing.com/software/pyqt/download
 
 This is the intial upload so expect the process to be streamlined as times goes on
 
-usage run pokemongo.py
+usage: python pokemongo.py 
+
+Or double click the file
