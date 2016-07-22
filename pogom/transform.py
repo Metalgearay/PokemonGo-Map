@@ -5,27 +5,26 @@ ee = 0.00669342162296594323
 pi = 3.14159265358979324
 
 
-def transform_from_wgs_to_gcj(wgs_loc):
-    adjust_loc = Location("", "")
-    if is_location_out_of_china(wgs_loc):
-        adjust_loc = wgs_loc
+def transform_from_wgs_to_gcj(latitude, longitude):
+    if is_location_out_of_china(latitude, longitude):
+        adjust_lat, adjust_lon = latitude, longitude
     else:
-        adjust_lat = transform_lat(wgs_loc.longitude - 105, wgs_loc.latitude - 35.0)
-        adjust_lon = transform_long(wgs_loc.longitude - 105, wgs_loc.latitude - 35.0)
-        rad_lat = wgs_loc.latitude / 180.0 * pi
+        adjust_lat = transform_lat(longitude - 105, latitude - 35.0)
+        adjust_lon = transform_long(longitude - 105, latitude - 35.0)
+        rad_lat = latitude / 180.0 * pi
         magic = sin(rad_lat)
         magic = 1 - ee * magic * magic
         sqrt_magic = sqrt(magic)
         adjust_lat = (adjust_lat * 180.0) / ((a * (1 - ee)) / (magic * sqrt_magic) * pi)
         adjust_lon = (adjust_lon * 180.0) / (a / sqrt_magic * cos(rad_lat) * pi)
-        adjust_loc.latitude = wgs_loc.latitude + adjust_lat
-        adjust_loc.longitude = wgs_loc.longitude + adjust_lon
+        adjust_lat += latitude
+        adjust_lon += longitude
     #print 'transfromed from ', wgs_loc, ' to ', adjust_loc
-    return adjust_loc.latitude, adjust_loc.longitude
+    return adjust_lat, adjust_lon
 
 
-def is_location_out_of_china(wgs):
-    if wgs.longitude < 72.004 or wgs.longitude > 137.8347 or wgs.latitude < 0.8293 or wgs.latitude > 55.8271:
+def is_location_out_of_china(latitude, longitude):
+    if longitude < 72.004 or longitude > 137.8347 or latitude < 0.8293 or latitude > 55.8271:
         return True
     return False
 
@@ -44,12 +43,3 @@ def transform_long(x, y):
     lon += (20.0 * sin(x * pi) + 40.0 * sin(x / 3.0 * pi)) * 2.0 / 3.0
     lon += (150.0 * sin(x / 12.0 * pi) + 300.0 * sin(x / 30.0 * pi)) * 2.0 / 3.0
     return lon
-
-
-class Location:
-    def __init__(self, latitude, longitude):
-        self.latitude = latitude
-        self.longitude = longitude
-
-    def __str__(self):
-        return "%8f,%8f" % (self.latitude, self.longitude)
