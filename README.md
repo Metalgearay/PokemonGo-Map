@@ -8,3 +8,5 @@ in addtion you need to download PyQT 4 for Python version 2.7 to actually get th
 https://www.riverbankcomputing.com/software/pyqt/download
 
 This is the intial upload so expect the process to be streamlined as times goes on
+
+usage run pokemongo.py
